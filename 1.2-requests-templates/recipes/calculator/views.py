@@ -36,18 +36,24 @@ def home_view(request):
     }
     return render(request, template_name, context)
 
-def cook(request, st='buter', cnt=2):
+def cook(request, st='buter', cnt=1):
     template_name = 'calculator/index.html'
     st=request.path
     st=st[1:-1]
-    print(st)
+    try:
+        cnt=int(request.GET['servings'])
+    except:
+        cnt=1
 
     context = {}
     context['recipe'] = {}
     try:
         for k, v in DATA[st].items():
+            print(k,v)
             context['recipe'][k]=v*cnt
+            print(context)
     except:
         context['recipe'] = {}
+
     return render(request, template_name, context)
 
