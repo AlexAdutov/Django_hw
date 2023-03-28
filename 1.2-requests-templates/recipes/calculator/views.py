@@ -40,10 +40,12 @@ def cook(request, st='buter', cnt=1):
     template_name = 'calculator/index.html'
     st=request.path
     st=st[1:-1]
-    try:
-        cnt=int(request.GET['servings'])
-    except:
-        cnt=1
+
+    cnt = int(request.GET.get('servings', 1))
+    # try:
+    #     cnt=int(request.GET['servings'])
+    # except:
+    #     cnt=1
 
     context = {}
     context['recipe'] = {}
