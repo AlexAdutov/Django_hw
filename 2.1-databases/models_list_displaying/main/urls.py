@@ -16,14 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, register_converter
 
-from books.views import books_view, books_list
-from books.converters import DateConverter
+from books.converters import PubDateConverter
+from books.views import books_view, index_view, books_date_view
 
-
+register_converter(PubDateConverter, 'ymd')
 
 urlpatterns = [
-    path('', books_view, name='books'),
+    path('books/', books_view, name='books'),
+    path('books/<ymd:date>/', books_date_view, name='bdate'),
+    path('', index_view),
     path('admin/', admin.site.urls),
-    path('books/', books_view),
-    path('books/<date:pub_date>/', books_list),
 ]
