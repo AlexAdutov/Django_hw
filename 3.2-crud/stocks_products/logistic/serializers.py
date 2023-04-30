@@ -1,9 +1,15 @@
 from rest_framework import serializers
 
+from logistic.models import Product, Stock
+
 
 class ProductSerializer(serializers.ModelSerializer):
     # настройте сериализатор для продукта
-    pass
+
+    class Meta:
+        model = Product
+        fields = ['id', 'title', 'description']
+    #pass
 
 
 class ProductPositionSerializer(serializers.ModelSerializer):
@@ -13,8 +19,11 @@ class ProductPositionSerializer(serializers.ModelSerializer):
 
 class StockSerializer(serializers.ModelSerializer):
     positions = ProductPositionSerializer(many=True)
-
     # настройте сериализатор для склада
+
+    class Meta:
+        model = Stock
+        fields = ['id', 'address', 'positions']
 
     def create(self, validated_data):
         # достаем связанные данные для других таблиц
