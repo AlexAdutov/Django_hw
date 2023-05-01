@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from logistic.models import Product, Stock
+from logistic.models import Product, Stock, StockProduct
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -14,7 +14,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductPositionSerializer(serializers.ModelSerializer):
     # настройте сериализатор для позиции продукта на складе
-    pass
+    class Meta:
+        model = StockProduct
+        fields = ['product', 'quantity', 'price']
+    #pass
 
 
 class StockSerializer(serializers.ModelSerializer):
@@ -27,6 +30,7 @@ class StockSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # достаем связанные данные для других таблиц
+        # print(validated_data)
         positions = validated_data.pop('positions')
 
         # создаем склад по его параметрам
@@ -36,17 +40,37 @@ class StockSerializer(serializers.ModelSerializer):
         # в нашем случае: таблицу StockProduct
         # с помощью списка positions
 
+        for position in positions:
+            values = {
+                'product': position['product'],
+                'quantity': position['quantity'],
+                'price': position['price'],
+                'stock': stock
+            }
+            StockProduct.objects.create(**values)
+
         return stock
 
     def update(self, instance, validated_data):
+        #print(validated_data)
         # достаем связанные данные для других таблиц
         positions = validated_data.pop('positions')
 
         # обновляем склад по его параметрам
         stock = super().update(instance, validated_data)
-
+        print(stock)
         # здесь вам надо обновить связанные таблицы
         # в нашем случае: таблицу StockProduct
         # с помощью списка positions
+
+        for position in positions:
+            StockProduct.objects.update_or_create(
+                product=position['product'],
+                stock=stock,
+                defaults={
+                    'quantity': position['quantity'],
+                    'price': position['price']
+                }
+            )
 
         return stock
