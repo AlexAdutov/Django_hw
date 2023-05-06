@@ -9,13 +9,13 @@ class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
     # при необходимости добавьте параметры фильтрации
     filterset_fields = ['id', 'stocks', ]
-    search_fields = ['title', ]
+    search_fields = ['title', 'description']
 
 
 class StockViewSet(ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
     # при необходимости добавьте параметры фильтрации
-    #filterset_fields = ['products',]
-    filterset_fields = ['id', 'positions__product']
-    search_fields = ['address', ]
+    filterset_fields = ['products',]
+    #filterset_fields = ['id', 'positions__product','products']
+    search_fields = ['address',]
